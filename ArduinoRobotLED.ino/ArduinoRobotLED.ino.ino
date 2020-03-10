@@ -1,5 +1,5 @@
 #include <FastLED.h>
-#define NUM_LEDS 24
+#define NUM_LEDS 48
 #define DATA_PIN 2
 #define COLOR_ORDER GRB
 
@@ -24,7 +24,7 @@ char ledMode = '1';
 void setup() {
   currentAlliance = blueAlliance;
   //FastLED.addLeds<NEOPIXEL, DATA_PIN, GRB>(leds, NUM_LEDS);
-  Serial.begin(9600);
+  d.begin(9600);
   FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);
 
   FastLED.setBrightness(100);
@@ -237,7 +237,6 @@ void aimVision(const CRGB & alliance, boolean foundTarget) {
     if ((millis() - startTime) >= 120) {
       startTime = millis();
       on = !on;
-      Serial.println(on);
     }
     
     for (int i = 0; i < NUM_LEDS; i++) {
