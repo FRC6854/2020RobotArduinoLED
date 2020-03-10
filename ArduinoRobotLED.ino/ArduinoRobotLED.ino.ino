@@ -1,5 +1,5 @@
 #include <FastLED.h>
-#define NUM_LEDS 44
+#define NUM_LEDS 24
 #define DATA_PIN 2
 #define COLOR_ORDER GRB
 
@@ -14,6 +14,8 @@ int lowConLedPos[(NUM_LEDS / 2) / 4];
 int upConvLedPos[(NUM_LEDS / 2) / 4];
 int visionLedPos[NUM_LEDS / 4];
 int climbLedPos[NUM_LEDS / 4];
+
+long startTime = millis();
 
 bool brownoutFlag = false;
 
@@ -49,7 +51,7 @@ void loop() {
 
     if (isUpperCase(ledMode)) {
       currentAlliance = blueAlliance;
-    } else if(isLowerCase(ledMode)) {
+    } else if (isLowerCase(ledMode)) {
       currentAlliance = redAlliance;
     }
 
@@ -92,14 +94,14 @@ void loop() {
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = CRGB::Red;
     }
-    
+
     FastLED.show();
     delay(1000);
 
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = CRGB::Black;
     }
-    
+
     FastLED.show();
     delay(1000);
   }
@@ -107,133 +109,151 @@ void loop() {
 
 void lowConveyorRun(const CRGB& alliance, int direction) {
 
-  for (int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = alliance;
-  }
+  if ((millis() - startTime) >= 250) {
+    startTime  = millis();
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = alliance;
+    }
 
-  if (direction == 0) {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[lowConLedPos[i]] = lowConveyor;
-      if (lowConLedPos[i] > NUM_LEDS / 2) {
-        lowConLedPos[i] = 0;
-      } else {
-        lowConLedPos[i] ++;
+    if (direction == 0) {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[lowConLedPos[i]] = lowConveyor;
+        if (lowConLedPos[i] > NUM_LEDS / 2) {
+          lowConLedPos[i] = 0;
+        } else {
+          lowConLedPos[i] ++;
+        }
+      }
+    } else {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[lowConLedPos[i]] = lowConveyor;
+        if (lowConLedPos[i] <= 0) {
+          lowConLedPos[i] = NUM_LEDS / 2;
+        } else {
+          lowConLedPos[i] --;
+        }
       }
     }
-  } else {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[lowConLedPos[i]] = lowConveyor;
-      if (lowConLedPos[i] <= 0) {
-        lowConLedPos[i] = NUM_LEDS / 2;
-      } else {
-        lowConLedPos[i] --;
-      }
-    }
+
+
+    FastLED.show();
+
   }
 
 
-  FastLED.show();
-
-  delay(250);
+  // delay(250);
 }
 
 void upConveyorRun(const CRGB& alliance, int direction) {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = alliance;
-  }
+  if ((millis() - startTime) >= 250) {
+    startTime = millis();
 
-  if (direction == 0) {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[upConvLedPos[i]] = upConveyor;
-      if (upConvLedPos[i] > NUM_LEDS) {
-        upConvLedPos[i] = NUM_LEDS / 2;
-      } else {
-        upConvLedPos[i] ++;
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = alliance;
+    }
+
+    if (direction == 0) {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[upConvLedPos[i]] = upConveyor;
+        if (upConvLedPos[i] > NUM_LEDS - 2) {
+          upConvLedPos[i] = NUM_LEDS / 2;
+        } else {
+          upConvLedPos[i] ++;
+        }
+      }
+    } else {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[upConvLedPos[i]] = upConveyor;
+        if (upConvLedPos[i] <= (NUM_LEDS / 2)) {
+          upConvLedPos[i] = NUM_LEDS - 1;
+        } else {
+          upConvLedPos[i] --;
+        }
       }
     }
-  } else {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[upConvLedPos[i]] = upConveyor;
-      if (upConvLedPos[i] <= NUM_LEDS / 2) {
-        upConvLedPos[i] = NUM_LEDS;
-      } else {
-        upConvLedPos[i] --;
-      }
-    }
+
+
+    FastLED.show();
   }
-
-
-  FastLED.show();
-
-  delay(250);
 }
 
-void runBothConveyors(const CRGB& alliance, const int direction) {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = alliance;
+void runBothConveyors(const CRGB & alliance, const int direction) {
+  if ((millis() - startTime) >= 250) {
+    startTime = millis();
+
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = alliance;
+    }
+
+    if (direction  == 0) {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[lowConLedPos[i]] = lowConveyor;
+        if (lowConLedPos[i] > NUM_LEDS / 2) {
+          lowConLedPos[i] = 0;
+        } else {
+          lowConLedPos[i] ++;
+        }
+      }
+
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[upConvLedPos[i]] = upConveyor;
+        if (upConvLedPos[i] > NUM_LEDS - 2) {
+          upConvLedPos[i] = NUM_LEDS / 2;
+        } else {
+          upConvLedPos[i] ++;
+        }
+      }
+
+    } else {
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[upConvLedPos[i]] = upConveyor;
+        if ((upConvLedPos[i] <= NUM_LEDS / 2)) {
+          upConvLedPos[i] = NUM_LEDS - 2;
+        } else {
+          upConvLedPos[i] --;
+        }
+      }
+
+      for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
+        leds[lowConLedPos[i]] = lowConveyor;
+        if (lowConLedPos[i] <= 1) {
+          lowConLedPos[i] = NUM_LEDS / 2;
+        } else {
+          lowConLedPos[i] --;
+        }
+      }
+    }
+
+    FastLED.show();
   }
 
-  if (direction  == 0) {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[lowConLedPos[i]] = lowConveyor;
-      if (lowConLedPos[i] > NUM_LEDS / 2) {
-        lowConLedPos[i] = 0;
-      } else {
-        lowConLedPos[i] ++;
-      }
-    }
-
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[upConvLedPos[i]] = upConveyor;
-      if (upConvLedPos[i] > NUM_LEDS - 2) {
-        upConvLedPos[i] = NUM_LEDS / 2;
-      } else {
-        upConvLedPos[i] ++;
-      }
-    }
-
-  } else {
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[upConvLedPos[i]] = upConveyor;
-      if ((upConvLedPos[i] <= NUM_LEDS / 2)) {
-        upConvLedPos[i] = NUM_LEDS - 2;
-      } else {
-        upConvLedPos[i] --;
-      }
-    }
-
-    for (int i = 0; i < ((NUM_LEDS / 2) / 4); i++) {
-      leds[lowConLedPos[i]] = lowConveyor;
-      if (lowConLedPos[i] <= 1) {
-        lowConLedPos[i] = NUM_LEDS / 2;
-      } else {
-        lowConLedPos[i] --;
-      }
-    }
-  }
-
-  FastLED.show();
-  delay(250 );
+  //delay(250 );
 }
 
-void aimVision(const CRGB& alliance, boolean foundTarget) {
+bool on = false;
+void aimVision(const CRGB & alliance, boolean foundTarget) {
 
   if (!foundTarget) {
+    if ((millis() - startTime) >= 120) {
+      startTime = millis();
+      on = !on;
+      Serial.println(on);
+    }
+    
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = alliance;
     }
 
-    delay(120);
-    FastLED.show();
-
-    for (int i = 0; i < NUM_LEDS / 4; i++) {
-      leds[visionLedPos[i]] = CRGB::Green;
-    }
-    delay(120);
-    FastLED.show();
-
-    for (int i = 0; i < NUM_LEDS / 4; i++) {
-      leds[visionLedPos[i]] = CRGB::Black;
+    if (on) {
+      for (int i = 0; i < NUM_LEDS / 4; i++) {
+        leds[visionLedPos[i]] = CRGB::Green;
+      }
+      FastLED.show();
+    } else {
+      for (int i = 0; i < NUM_LEDS / 4; i++) {
+        leds[visionLedPos[i]] = CRGB::Black;
+      }
+      FastLED.show();
     }
   } else {
     for (int i = 0; i < NUM_LEDS; i++) {
@@ -247,7 +267,7 @@ void aimVision(const CRGB& alliance, boolean foundTarget) {
   }
 }
 
-void climb(const CRGB& alliance, int climbMode) {
+void climb(const CRGB & alliance, int climbMode) {
   if (climbMode == 0) {
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = alliance;
@@ -264,17 +284,21 @@ void climb(const CRGB& alliance, int climbMode) {
       leds[i] = alliance;
     }
 
-    delay(120);
-    FastLED.show();
-
-    for (int i = 0; i < NUM_LEDS / 4; i++) {
-      leds[climbLedPos[i]] = CRGB::White;
+    if ((millis() - startTime) >= 120) {
+      startTime = millis();
+      on = !on;
     }
-    delay(120);
-    FastLED.show();
 
-    for (int i = 0; i < NUM_LEDS / 4; i++) {
-      leds[climbLedPos[i]] = CRGB::Black;
+    if (on) {
+      for (int i = 0; i < NUM_LEDS / 4; i++) {
+        leds[climbLedPos[i]] = CRGB::White;
+      }
+      FastLED.show();
+    } else {
+      for (int i = 0; i < NUM_LEDS / 4; i++) {
+        leds[climbLedPos[i]] = CRGB::White;
+      }
+      FastLED.show();
     }
   }
 }
